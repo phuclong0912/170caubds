@@ -3,21 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài Thi Môi Giới BĐS - 50 Câu</title>
+  <title>Bài Thi 50 Câu Môi Giới BĐS</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Bài Thi Trắc Nghiệm (50/170 Câu - 45 Phút)</h1>
-    <div id="timer">Thời gian: <span id="time-left">45:00</span></div>
-    <div id="quiz-container"></div>
-    <button id="submit-quiz">Nộp Bài</button>
-    <div id="result" style="display:none;"></div>
+    <h1>Bài Thi Trắc Nghiệm - 50/170 Câu (45 Phút)</h1>
+    <div id="timer">Thời gian còn lại: <span id="time">45:00</span></div>
+    <form id="quiz-form"></form>
+    <button id="submit">NỘP BÀI</button>
+    <div id="result" style="display:none; margin-top:20px;"></div>
   </div>
+
   <script src="data.js"></script>
-  <script src="script.js"></script>
   <script>
-    loadQuestions('quiz'); // Load mode thi, random 50 câu
+    // Random 50 câu
+    const selectedQs = questions.sort(() => 0.5 - Math.random()).slice(0, 50);
+    const form = document.getElementById('quiz-form');
+    const userAnswers = {};
+
+    selectedQs.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<h3>Câu ${i+1}: ${q.question}</h3><ul class="options">`;
+      q.options.forEach(opt => {
+        const letter = opt[0];
+        div.innerHTML += `<li><label><input type="radio" name="q${i}" value="${letter}"> ${opt}</label></li>`;
+      });
+      div.innerHTML += `</ul>`;
+      form.appendChild(div);
+    });
+
+    // Timer
+    let time = 45 * 60;
+    const timer = setInterval(() => {
+      time--;
+      const min = Math.floor(time/60).toString().padStart(2,'0');
+      const sec = (time%60).toString().padStart(2,'0');
+      document.getElementById('time').textContent = `${min}:${sec}`;
+      if (time <= 0) {
+        clearInterval(timer);
+        submitQuiz();
+      }
+    }, 1000);
+
+    // Nộp bài
+    document.getElementById('submit').addEventListener('click', submitQuiz);
+    function submitQuiz() {
+      clearInterval(timer);
+      let score = 0;
+      selectedQs.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        userAnswers[i] = selected ? selected.value : 'Không chọn';
+        if (userAnswers[i] === q.answer) score++;
+      });
+      document.getElementById('quiz-form').style.display = 'none';
+      document.getElementById('submit').style.display = 'none';
+      document.getElementById('timer').style.display = 'none';
+      document.getElementById('result').innerHTML = `
+        <h2>Kết quả: $$ {score}/50 điểm ( $${(score*2).toFixed(0)}/100)</h2>
+        <p>Chi tiết đáp án:</p>
+        ${selectedQs.map((q, i) => `
+          <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
+            <strong>Câu $$ {i+1}:</strong> Bạn chọn <strong> $${userAnswers[i]}</strong> - Đáp án đúng: <strong style="color:green;">${q.answer}</strong><br>
+            <em>${q.explanation}</em>
+          </div>
+        `).join('')}
+      `;
+      document.getElementById('result').style.display = 'block';
+    }
   </script>
 </body>
 </html>
