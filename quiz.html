@@ -32,6 +32,7 @@
         <div style="text-align:center;">
             <button id="submit" onclick="submitQuiz()">Nộp Bài</button>
             <button onclick="restartQuiz()">Làm Lại</button>
+            <button onclick="location.href='index.html'" style="background:#607d8b;">Quay lại ôn tập</button>
         </div>
         <div id="result" class="hidden"></div>
         <div id="answers" class="hidden"></div>
@@ -51,12 +52,7 @@
 
         function init() {
             let allQuestions = shuffle([...questions]);
-            current = allQuestions.slice(0, 50);  // 50 câu
-            current.forEach(q => {
-                let opts = shuffle([...q.options]);
-                q.shuffled = opts;
-                q.correctIdx = opts.findIndex(opt => opt.startsWith(q.answer));
-            });
+            current = allQuestions.slice(0, 50);
             user = new Array(50).fill(-1);
             display();
             startTimer();
@@ -67,8 +63,8 @@
                 <div class="question">
                     <strong>Câu ${i+1}:</strong> ${q.question}
                     <div class="options">
-                        ${q.shuffled.map((opt, j) => `
-                            <div class="option" onclick="choose(${i},${j})">${String.fromCharCode(65+j)}. ${opt.substring(3)}</div>
+                        ${q.options.map((opt, j) => `
+                            <div class="option" onclick="choose(${i},${j})">${String.fromCharCode(65+j)}. ${opt}</div>
                         `).join('')}
                     </div>
                 </div>
@@ -101,14 +97,15 @@
 
             current.forEach((q, i) => {
                 let opts = document.querySelectorAll(`.question:nth-child(${i+1}) .option`);
-                if (user[i] === q.correctIdx) {
+                const correctIdx = q.answer.charCodeAt(0) - 65;
+                if (user[i] === correctIdx) {
                     score++;
                     opts[user[i]].classList.add('correct');
                 } else {
                     if (user[i] !== -1) opts[user[i]].classList.add('incorrect');
-                    opts[q.correctIdx].classList.add('correct');
+                    opts[correctIdx].classList.add('correct');
                 }
-                detail += `<p><strong>Câu ${i+1}:</strong> Đáp án đúng: <strong>${q.answer}. ${q.options.find(opt => opt.startsWith(q.answer)).substring(3)}</strong><br><em>${q.explanation}</em></p>`;
+                detail += `<p><strong>Câu ${i+1}:</strong> Đáp án đúng: <strong>${q.answer}. ${q.options[correctIdx]}</strong><br><em>${q.explanation}</em></p>`;
             });
 
             let percent = (score/50*100).toFixed(1);
