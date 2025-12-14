@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ôn Thi Môi Giới BĐS 2025 - 170 Câu</title>
+    <title>Ôn Tập 170 Câu Môi Giới BĐS 2025</title>
     <style>
         body {font-family: Arial, sans-serif; margin:0; background:#e8f5e8; color:#333;}
         .container {max-width:900px; margin:20px auto; padding:20px; background:white; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1);}
         h1 {text-align:center; color:#1b5e20;}
         .search {width:100%; padding:12px; font-size:16px; margin:20px 0; border:2px solid #81c784; border-radius:8px;}
         .question {margin:25px 0; padding:20px; background:#f1f8e9; border-radius:10px;}
-        details summary {font-weight:bold; color:#1b5e20; cursor:pointer;}
+        .options div {margin:8px 0; padding:10px; background:#e8f5e8; border-radius:8px;}
+        details summary {font-weight:bold; color:#1b5e20; cursor:pointer; margin-top:10px;}
         .start-btn {background:#2e7d32; color:white; padding:15px 40px; font-size:20px; border:none; border-radius:8px; cursor:pointer; display:block; margin:40px auto;}
         .start-btn:hover {background:#1b5e20;}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>ÔN TẬP 170 CÂU KIẾN THỨC MÔI GIỚI BĐS 2025</h1>
-        <input type="text" class="search" placeholder="Tìm kiếm câu hỏi..." id="search">
+        <h1>ÔN TẬP TOÀN BỘ 170 CÂU KIẾN THỨC MÔI GIỚI BĐS 2025</h1>
+        <input type="text" class="search" id="search" placeholder="Tìm kiếm câu hỏi hoặc đáp án...">
         <div id="questions-list"></div>
         <button class="start-btn" onclick="location.href='quiz.html'">BẮT ĐẦU LÀM BÀI THI (50 CÂU NGẪU NHIÊN - 45 PHÚT)</button>
     </div>
 
-    <script src="data.js"></script>
+    <script src="questions.js"></script>
     <script>
         const list = document.getElementById('questions-list');
         list.innerHTML = questions.map((q, i) => `
             <div class="question">
                 <strong>Câu ${i+1}:</strong> ${q.question}
-                <div class="options" style="margin:15px 0;">
-                    ${q.options.map((opt, j) => `<div style="margin:8px 0;">${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}
+                <div class="options">
+                    ${q.options.map((opt, j) => `<div>${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}
                 </div>
                 <details><summary>Xem đáp án đúng & giải thích</summary>
-                    <p style="color:#4caf50; font-weight:bold;">Đáp án đúng: ${q.answer}. ${q.options[q.answer.charCodeAt(0) - 65]}</p>
-                    <p>${q.explanation}</p>
+                    <p style="color:#4caf50; font-weight:bold;">Đáp án đúng: ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</p>
+                    <p><em>Giải thích: (Tham khảo luật liên quan)</em></p>
                 </details>
             </div>
         `).join('');
