@@ -3,96 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài Thi 50 Câu Môi Giới BĐS</title>
+  <title>Thi Môi Giới BĐS - 50 Câu</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>BÀI THI TRẮC NGHIỆM MÔI GIỚI BĐS</h1>
+    <h1>THI MÔI GIỚI BẤT ĐỘNG SẢN</h1>
     <div id="timer">Thời gian: <span id="time-left">45:00</span></div>
     <div id="quiz"></div>
     <button id="submit-quiz" class="submit-btn">NỘP BÀI</button>
+    <button id="restart" style="display:none;" class="restart-btn">LÀM LẠI</button>
     <div id="result" style="display:none;"></div>
   </div>
 
   <script src="data.js"></script>
   <script>
-    // Random 50/170 câu
     const allQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 50);
     let userAnswers = {};
     let timeLeft = 45 * 60;
+    let timerInterval;
 
-    // Hiển thị câu hỏi
     const quizDiv = document.getElementById('quiz');
-    allQuestions.forEach((q, index) => {
+    allQuestions.forEach((q, i) => {
       const qDiv = document.createElement('div');
-      qDiv.className = 'question-item';
+      qDiv.className = 'question';
       qDiv.innerHTML = `
-        <p><strong>Câu ${index + 1}:</strong> ${q.question}</p>
-        <ul class="options">
+        <p><strong>Câu ${i+1}:</strong> ${q.question}</p>
+        <ul>
           ${q.options.map(opt => {
-            const letter = opt.charAt(0);
-            return `<li><label><input type="radio" name="q${index}" value="${letter}"> ${opt}</label></li>`;
+            const letter = opt[0];
+            return `<li><label><input type="radio" name="q${i}" value="${letter}"> ${opt}</label></li>`;
           }).join('')}
         </ul>
       `;
       quizDiv.appendChild(qDiv);
     });
 
-    // Timer giống cũ
-    const timerInterval = setInterval(() => {
+    timerInterval = setInterval(() => {
       timeLeft--;
       const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
       const secs = String(timeLeft % 60).padStart(2, '0');
       document.getElementById('time-left').textContent = `${mins}:${secs}`;
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        submitQuiz();
-      }
+      if (timeLeft <= 0) submitQuiz();
     }, 1000);
 
-    // Chọn đáp án
     quizDiv.addEventListener('change', (e) => {
-      if (e.target.type === 'radio') {
-        const name = e.target.name;
-        const value = e.target.value;
-        userAnswers[name] = value;
-      }
+      if (e.target.type === 'radio') userAnswers[e.target.name] = e.target.value;
     });
 
-    // Nộp bài
-    document.getElementById('submit-quiz').addEventListener('click', submitQuiz);
+    document.getElementById('submit-quiz').onclick = submitQuiz;
+    document.getElementById('restart').onclick = () => location.reload();
+
     function submitQuiz() {
       clearInterval(timerInterval);
-      document.getElementById('submit-quiz').disabled = true;
+      document.getElementById('submit-quiz').style.display = 'none';
+      document.getElementById('restart').style.display = 'block';
       let correct = 0;
-      const resultDiv = document.getElementById('result');
-      let detailHTML = '';
-
+      let detail = '<h2>CHI TIẾT ĐÁP ÁN</h2>';
       allQuestions.forEach((q, i) => {
         const selected = userAnswers[`q${i}`] || 'Chưa chọn';
         const isCorrect = selected === q.answer;
         if (isCorrect) correct++;
-
-        detailHTML += `
-          <div class="result-question">
-            <p><strong>Câu ${i + 1}:</strong> Bạn chọn: <span class="${isCorrect ? 'correct' : 'wrong'}">${selected}</span> 
-            - Đáp án đúng: <span class="correct">${q.answer}</span></p>
-            <p><em>${q.explanation}</em></p>
+        detail += `
+          <div class="result-item">
+            <p>Câu ${i+1}: Bạn chọn <span class="${isCorrect ? 'correct' : 'wrong'}">${selected}</span> - Đúng: <span class="correct">${q.answer}</span></p>
+            <p>${q.explanation}</p>
           </div>
         `;
       });
-
-      resultDiv.innerHTML = `
-        <h2>KẾT QUẢ: ${correct}/50 câu đúng</h2>
-        <h3>Điểm: ${(correct * 2).toFixed(1)} / 100</h3>
-        ${detailHTML}
-        <button onclick="location.reload()" class="restart-btn">Làm lại</button>
-      `;
-      resultDiv.style.display = 'block';
-      document.getElementById('quiz').style.display = 'none';
-      document.getElementById('timer').style.display = 'none';
-      document.getElementById('submit-quiz').style.display = 'none';
+      document.getElementById('result').innerHTML = `<h2>KẾT QUẢ: ${correct}/50 (${(correct*2).toFixed(0)}/100 điểm)</h2>${detail}`;
+      document.getElementById('result').style.display = 'block';
     }
   </script>
 </body>
