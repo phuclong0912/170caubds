@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>170 Câu Hỏi Môi Giới BĐS - Học & Thi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Kiến Thức Cơ Sở Môi Giới Bất Động Sản (170 Câu)</h1>
+    <input type="text" id="search" placeholder="Tìm kiếm câu hỏi...">
+    <select id="filter">
+      <option value="">Tất cả chuyên đề</option>
+      <option value="luat-kdbs">Luật KDBĐS</option>
+      <!-- Thêm option filter theo chuyên đề nếu cần, dựa trên tag trong data.js -->
+    </select>
+    <div id="questions-list"></div>
+    <button id="start-quiz" class="start-btn">BẮT ĐẦU LÀM BÀI THI</button>
+  </div>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+  <script>
+    loadQuestions('study'); // Load mode học
+    document.getElementById('start-quiz').addEventListener('click', () => {
+      window.location.href = 'quiz.html';
+    });
+  </script>
+</body>
+</html>
