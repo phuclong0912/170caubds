@@ -168,5 +168,4 @@ const questions = [
     {question: "“Tổ chức kinh tế được giao đất để thực hiện dự án đầu tư xây dựng nhà ở để bán hoặc để bán kết hợp cho thuê” được Nhà nước giao đất theo hình thức nào?", options: ["Nhà nước giao đất có thu tiền sử dụng đất.", "Nhà nước giao đất không thu tiền sử dụng đất.", "Nhà nước cho thuê đất", "Nhà nước giao đất vô thời hạn."], correct: 0},
     {question: "Cơ quan nào có trách nhiệm kiểm tra việc thực hiện các chỉ tiêu sử dụng đất trong quy hoạch, kế hoạch sử dụng đất quốc gia, cấp tỉnh và giám sát các địa phương, các bộ, ngành trong việc thực hiện quy hoạch, kế hoạch sử dụng đất?", options: ["Chính phủ", "Bộ Xây dựng", "Bộ Tài nguyên và Môi trường", "Bộ Tài chính"], correct: 2},
     {question: "Việc Nhà nước trả lại giá trị quyền sử dụng đất đối với diện tích đất thu hồi cho người sử dụng đất được gọi là gì?", options: ["Bồi thường về đất.", "Nhà nước thu hồi đất.", "Nhà nước giao quyền sử dụng đất.", "Hỗ trợ khi Nhà nước thu hồi đất."], correct: 0}
-
-    ];
+];
