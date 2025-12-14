@@ -8,69 +8,91 @@
 </head>
 <body>
   <div class="container">
-    <h1>Bài Thi Trắc Nghiệm - 50/170 Câu (45 Phút)</h1>
-    <div id="timer">Thời gian còn lại: <span id="time">45:00</span></div>
-    <form id="quiz-form"></form>
-    <button id="submit">NỘP BÀI</button>
-    <div id="result" style="display:none; margin-top:20px;"></div>
+    <h1>BÀI THI TRẮC NGHIỆM MÔI GIỚI BĐS</h1>
+    <div id="timer">Thời gian: <span id="time-left">45:00</span></div>
+    <div id="quiz"></div>
+    <button id="submit-quiz" class="submit-btn">NỘP BÀI</button>
+    <div id="result" style="display:none;"></div>
   </div>
 
   <script src="data.js"></script>
   <script>
-    // Random 50 câu
-    const selectedQs = questions.sort(() => 0.5 - Math.random()).slice(0, 50);
-    const form = document.getElementById('quiz-form');
-    const userAnswers = {};
+    // Random 50/170 câu
+    const allQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 50);
+    let userAnswers = {};
+    let timeLeft = 45 * 60;
 
-    selectedQs.forEach((q, i) => {
-      const div = document.createElement('div');
-      div.className = 'question';
-      div.innerHTML = `<h3>Câu ${i+1}: ${q.question}</h3><ul class="options">`;
-      q.options.forEach(opt => {
-        const letter = opt[0];
-        div.innerHTML += `<li><label><input type="radio" name="q${i}" value="${letter}"> ${opt}</label></li>`;
-      });
-      div.innerHTML += `</ul>`;
-      form.appendChild(div);
+    // Hiển thị câu hỏi
+    const quizDiv = document.getElementById('quiz');
+    allQuestions.forEach((q, index) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question-item';
+      qDiv.innerHTML = `
+        <p><strong>Câu ${index + 1}:</strong> ${q.question}</p>
+        <ul class="options">
+          ${q.options.map(opt => {
+            const letter = opt.charAt(0);
+            return `<li><label><input type="radio" name="q${index}" value="${letter}"> ${opt}</label></li>`;
+          }).join('')}
+        </ul>
+      `;
+      quizDiv.appendChild(qDiv);
     });
 
-    // Timer
-    let time = 45 * 60;
-    const timer = setInterval(() => {
-      time--;
-      const min = Math.floor(time/60).toString().padStart(2,'0');
-      const sec = (time%60).toString().padStart(2,'0');
-      document.getElementById('time').textContent = `${min}:${sec}`;
-      if (time <= 0) {
-        clearInterval(timer);
+    // Timer giống cũ
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const secs = String(timeLeft % 60).padStart(2, '0');
+      document.getElementById('time-left').textContent = `${mins}:${secs}`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
         submitQuiz();
       }
     }, 1000);
 
+    // Chọn đáp án
+    quizDiv.addEventListener('change', (e) => {
+      if (e.target.type === 'radio') {
+        const name = e.target.name;
+        const value = e.target.value;
+        userAnswers[name] = value;
+      }
+    });
+
     // Nộp bài
-    document.getElementById('submit').addEventListener('click', submitQuiz);
+    document.getElementById('submit-quiz').addEventListener('click', submitQuiz);
     function submitQuiz() {
-      clearInterval(timer);
-      let score = 0;
-      selectedQs.forEach((q, i) => {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        userAnswers[i] = selected ? selected.value : 'Không chọn';
-        if (userAnswers[i] === q.answer) score++;
-      });
-      document.getElementById('quiz-form').style.display = 'none';
-      document.getElementById('submit').style.display = 'none';
-      document.getElementById('timer').style.display = 'none';
-      document.getElementById('result').innerHTML = `
-        <h2>Kết quả: $$ {score}/50 điểm ( $${(score*2).toFixed(0)}/100)</h2>
-        <p>Chi tiết đáp án:</p>
-        ${selectedQs.map((q, i) => `
-          <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
-            <strong>Câu $$ {i+1}:</strong> Bạn chọn <strong> $${userAnswers[i]}</strong> - Đáp án đúng: <strong style="color:green;">${q.answer}</strong><br>
-            <em>${q.explanation}</em>
+      clearInterval(timerInterval);
+      document.getElementById('submit-quiz').disabled = true;
+      let correct = 0;
+      const resultDiv = document.getElementById('result');
+      let detailHTML = '';
+
+      allQuestions.forEach((q, i) => {
+        const selected = userAnswers[`q${i}`] || 'Chưa chọn';
+        const isCorrect = selected === q.answer;
+        if (isCorrect) correct++;
+
+        detailHTML += `
+          <div class="result-question">
+            <p><strong>Câu ${i + 1}:</strong> Bạn chọn: <span class="${isCorrect ? 'correct' : 'wrong'}">${selected}</span> 
+            - Đáp án đúng: <span class="correct">${q.answer}</span></p>
+            <p><em>${q.explanation}</em></p>
           </div>
-        `).join('')}
+        `;
+      });
+
+      resultDiv.innerHTML = `
+        <h2>KẾT QUẢ: ${correct}/50 câu đúng</h2>
+        <h3>Điểm: ${(correct * 2).toFixed(1)} / 100</h3>
+        ${detailHTML}
+        <button onclick="location.reload()" class="restart-btn">Làm lại</button>
       `;
-      document.getElementById('result').style.display = 'block';
+      resultDiv.style.display = 'block';
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('timer').style.display = 'none';
+      document.getElementById('submit-quiz').style.display = 'none';
     }
   </script>
 </body>
