@@ -3,25 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>170 Câu Hỏi Môi Giới BĐS - Học & Thi</title>
+  <title>170 Câu Môi Giới BĐS - Học & Thi</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Kiến Thức Cơ Sở Môi Giới Bất Động Sản (170 Câu)</h1>
-    <input type="text" id="search" placeholder="Tìm kiếm câu hỏi...">
-    <select id="filter">
-      <option value="">Tất cả chuyên đề</option>
-      <option value="luat-kdbs">Luật KDBĐS</option>
-      <!-- Thêm option filter theo chuyên đề nếu cần, dựa trên tag trong data.js -->
-    </select>
+    <h1>170 Câu Kiến Thức Môi Giới Bất Động Sản</h1>
+    <p style="text-align:center;">Ôn tập toàn bộ 170 câu - Bấm vào câu để xem đáp án</p>
+    <input type="text" id="search" placeholder="Tìm kiếm câu hỏi..." style="width:100%; padding:10px; margin:15px 0;">
     <div id="questions-list"></div>
-    <button id="start-quiz" class="start-btn">BẮT ĐẦU LÀM BÀI THI</button>
+    <button id="start-quiz" class="start-btn">BẮT ĐẦU LÀM BÀI THI (50 Câu Random - 45 Phút)</button>
   </div>
+
   <script src="data.js"></script>
-  <script src="script.js"></script>
   <script>
-    loadQuestions('study'); // Load mode học
+    // Load tất cả 170 câu để học
+    const list = document.getElementById('questions-list');
+    list.innerHTML = questions.map(q => `
+      <div class="question">
+        <h3>Câu ${q.id}: ${q.question}</h3>
+        <ul class="options">
+          ${q.options.map(opt => `<li>${opt}</li>`).join('')}
+        </ul>
+        <details><summary>Xem đáp án & giải thích</summary>
+          <p><strong>Đáp án đúng: ${q.answer}</strong></p>
+          <p>${q.explanation}</p>
+        </details>
+      </div>
+    `).join('');
+
+    // Search đơn giản
+    document.getElementById('search').addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.question').forEach(div => {
+        div.style.display = div.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+      });
+    });
+
+    // Nút thi
     document.getElementById('start-quiz').addEventListener('click', () => {
       window.location.href = 'quiz.html';
     });
