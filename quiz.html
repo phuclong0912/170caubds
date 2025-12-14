@@ -21,7 +21,6 @@
         button:hover {background:#1b5e20;}
         #result, #answers {text-align:center; margin:30px 0; font-size:18px;}
         .hidden {display:none;}
-        .back-btn {background:#607d8b;}
     </style>
 </head>
 <body>
@@ -33,7 +32,7 @@
         <div style="text-align:center;">
             <button id="submit" onclick="submitQuiz()">Nộp Bài</button>
             <button onclick="restartQuiz()">Làm Lại</button>
-            <button class="back-btn" onclick="location.href='index.html'">Quay lại ôn tập</button>
+            <button onclick="location.href='index.html'" style="background:#607d8b;">Quay lại ôn tập</button>
         </div>
         <div id="result" class="hidden"></div>
         <div id="answers" class="hidden"></div>
@@ -41,7 +40,6 @@
 
     <script src="questions.js"></script>
     <script>
-        // Giống hệt code cũ của mày, chỉ đổi số câu và thời gian
         let current = [], user = [], timeLeft = 45*60, timer;
 
         function shuffle(a) { 
@@ -54,13 +52,79 @@
 
         function init() {
             let allQuestions = shuffle([...questions]);
-            current = allQuestions.slice(0, 50);  // 50 câu từ 170
+            current = allQuestions.slice(0, 50);
             user = new Array(50).fill(-1);
             display();
             startTimer();
         }
 
-        // ... (giữ nguyên toàn bộ code cũ của mày ở đây: display, choose, startTimer, submitQuiz, restartQuiz)
+        function display() {
+            document.getElementById('quiz').innerHTML = current.map((q, i) => `
+                <div class="question">
+                    <strong>Câu ${i+1}:</strong> ${q.question}
+                    <div class="options">
+                        ${q.options.map((opt, j) => `
+                            <div class="option" onclick="choose(${i},${j})">${String.fromCharCode(65+j)}. ${opt}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function choose(qIdx, optIdx) {
+            user[qIdx] = optIdx;
+            document.querySelectorAll(`.question:nth-child(${qIdx+1}) .option`).forEach((el, j) => {
+                el.classList.toggle('selected', j === optIdx);
+            });
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                let m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+                let s = String(timeLeft%60).padStart(2,'0');
+                document.getElementById('timer').textContent = `Thời gian: ${m}:${s}`;
+                if (timeLeft <= 0) submitQuiz();
+            }, 1000);
+        }
+
+        function submitQuiz() {
+            clearInterval(timer);
+            document.getElementById('submit').disabled = true;
+
+            let score = 0;
+            let detail = '<h2>Đáp án chi tiết:</h2>';
+
+            current.forEach((q, i) => {
+                let opts = document.querySelectorAll(`.question:nth-child(${i+1}) .option`);
+                const correctIdx = q.answer.charCodeAt(0) - 65;
+                if (user[i] === correctIdx) {
+                    score++;
+                    opts[user[i]].classList.add('correct');
+                } else {
+                    if (user[i] !== -1) opts[user[i]].classList.add('incorrect');
+                    opts[correctIdx].classList.add('correct');
+                }
+                detail += `<p><strong>Câu ${i+1}:</strong> Đáp án đúng: <strong>${q.answer}. ${q.options[correctIdx]}</strong><br><em>${q.explanation}</em></p>`;
+            });
+
+            let percent = (score/50*100).toFixed(1);
+            document.getElementById('result').innerHTML = `
+                <h2>Kết quả: ${score}/50 điểm (${percent}%)</h2>
+                ${percent >= 80 ? 'XUẤT SẮC! ĐẬU CHẮC!' : percent >= 70 ? 'Tốt, gần đậu rồi!' : 'Ôn lại đi bro!'}
+                <br><button onclick="document.getElementById('answers').classList.remove('hidden')">Xem đáp án chi tiết</button>
+            `;
+            document.getElementById('answers').innerHTML = detail;
+            document.getElementById('result').classList.remove('hidden');
+        }
+
+        function restartQuiz() {
+            timeLeft = 45*60;
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('answers').classList.add('hidden');
+            document.getElementById('submit').disabled = false;
+            init();
+        }
 
         init();
     </script>
