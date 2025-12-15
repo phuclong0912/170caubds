@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Câu Hỏi Ôn Tập Môi Giới BĐS</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
 
+        /* Thanh cố định ở đầu trang */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #007bff;
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-sizing: border-box;
+        }
+
+        .fixed-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            max-width: 600px;
+        }
+
+        #searchInput {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 400px;
+            outline: none;
+        }
+
+        #startQuizBtn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.3s;
+        }
+
+        #startQuizBtn:hover {
+            background-color: #218838;
+        }
+
+        /* Để nội dung chính không bị đè bởi header fixed */
+        .main-content {
+            margin-top: 80px; /* Khoảng cách bằng chiều cao header */
+            padding: 20px;
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .fixed-header {
+                padding: 10px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .fixed-header h1 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+            .search-container {
+                width: 100%;
+                justify-content: center;
+            }
+            #searchInput {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+  <!-- Thanh cố định mới -->
+    <div class="fixed-header">
+        <h1>Ôn thi môi giới BĐS - 170 câu</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm câu hỏi...">
+            <button id="startQuizBtn">Bắt đầu thi thử</button>
+        </div>
+    </div>
+
+    <!-- Nội dung chính (đừng quên thêm class main-content vào phần chứa danh sách câu hỏi) -->
+    <div class="main-content">
+        <!-- Phần danh sách câu hỏi hiện tại của mày để nguyên ở đây -->
+        <div id="questionsContainer">
+            <!-- Các câu hỏi sẽ được load bởi JS -->
+        </div>
+    </div>
+
+    <!-- Giữ nguyên phần script cũ của mày -->
+    <script src="questions.js"></script>
+    <script>
+        // Code JS hiện tại của mày giữ nguyên, chỉ thêm 1 dòng nếu cần
+        document.getElementById('startQuizBtn').addEventListener('click', function() {
+            window.location.href = 'quiz.html';
+        });
+
+        // Phần tìm kiếm và hiển thị câu hỏi giữ nguyên như cũ...
+        // (dán toàn bộ script tìm kiếm + render câu hỏi của mày vào đây)
+    </script>
+
+
+  
+    <div class="container">
+        <h1>BỘ CÂU HỎI ÔN TẬP KIẾN THỨC MÔI GIỚI BĐS</h1>
+        <input type="text" class="search" id="search" placeholder="Tìm kiếm câu hỏi hoặc đáp án...">
+        <div id="questions-list"></div>
+        <button class="start-btn" onclick="location.href='quiz.html'">BẮT ĐẦU LÀM BÀI THI (50 CÂU NGẪU NHIÊN - 45 PHÚT)</button>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+        const list = document.getElementById('questions-list');
+        list.innerHTML = questions.map((q, i) => `
+            <div class="question">
+                <strong>Câu ${i+1}:</strong> ${q.question}
+                <div class="options">
+                    ${q.options.map((opt, j) => `<div>${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}
+                </div>
+                <details><summary>Xem đáp án đúng & giải thích</summary>
+                    <p style="color:#4caf50; font-weight:bold;">Đáp án đúng: ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</p>
+                    <p><em>Giải thích: (Tham khảo luật liên quan)</em></p>
+                </details>
+            </div>
+        `).join('');
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.question').forEach(div => {
+                div.style.display = div.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+  </html>
