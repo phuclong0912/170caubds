@@ -19,38 +19,37 @@
             left: 0;
             width: 100%;
             background: #1b5e20;
-            padding: 15px 20px;
+            padding: 10px 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             z-index: 1000;
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            gap: 15px;
+            gap: 10px;
             box-sizing: border-box;
         }
 
-        .fixed-header h1 {
+        .header-title {
             color: white;
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             text-align: center;
-            flex: 1;
+            font-weight: bold;
         }
 
         .search-and-btn {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 10px;
             width: 100%;
-            max-width: 700px;
+            max-width: 800px;
+            flex-wrap: wrap;
             justify-content: center;
         }
 
         .search {
             flex: 1;
-            min-width: 250px;
+            min-width: 220px;
             padding: 12px 15px;
             font-size: 16px;
             border: 2px solid #81c784;
@@ -61,8 +60,8 @@
         .start-btn {
             background: #2e7d32;
             color: white;
-            padding: 12px 30px;
-            font-size: 18px;
+            padding: 12px 25px;
+            font-size: 17px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -74,10 +73,26 @@
             background: #1b5e20;
         }
 
-        /* Nội dung chính đẩy xuống dưới header */
+        /* Tiêu đề đầy đủ dưới header (vẫn cố định nhưng không chiếm nhiều chỗ) */
+        .full-title {
+            position: fixed;
+            top: 90px; /* Điều chỉnh theo chiều cao header thực tế */
+            left: 0;
+            width: 100%;
+            background: #e8f5e8;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 1.1rem;
+            color: #1b5e20;
+            font-weight: bold;
+            z-index: 999;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Nội dung chính */
         .container {
             max-width: 900px;
-            margin: 100px auto 40px; /* 100px để chừa chỗ cho header fixed */
+            margin: 140px auto 40px; /* Chừa chỗ cho header + full-title */
             padding: 20px;
             background: white;
             border-radius: 15px;
@@ -105,17 +120,9 @@
             margin-top: 10px;
         }
 
-        .main-content {
-            margin-top: 80px; /* Khoảng cách bằng chiều cao header */
-            padding: 20px;
-        }
-        
-        /* Responsive cho mobile */
+        /* Responsive tối ưu mobile */
         @media (max-width: 768px) {
-            .fixed-header {
-                padding: 10px;
-            }
-            .fixed-header h1 {
+            .header-title {
                 font-size: 1.2rem;
             }
             .search-and-btn {
@@ -125,18 +132,68 @@
                 min-width: auto;
                 width: 100%;
             }
+            .full-title {
+                top: 80px;
+                font-size: 1rem;
+            }
+            .container {
+                margin-top: 130px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .start-btn {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* Landscape mobile: giảm kích thước */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .fixed-header {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .search {
+                padding: 10px;
+                font-size: 15px;
+            }
+            .start-btn {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            .full-title {
+                top: 70px;
+                padding: 5px 0;
+                font-size: 0.9rem;
+            }
+            .container {
+                margin-top: 110px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Thanh header cố định mới -->
+    <!-- Header cố định ngắn gọn -->
     <div class="fixed-header">
-        <h1>BỘ CÂU HỎI ÔN TẬP KIẾN THỨC MÔI GIỚI BĐS</h1>
+        <h1 class="header-title">Ôn thi Môi Giới BĐS</h1>
         <div class="search-and-btn">
             <input type="text" class="search" id="search" placeholder="Tìm kiếm câu hỏi hoặc đáp án...">
             <button class="start-btn" onclick="location.href='quiz.html'">THI THỬ</button>
         </div>
+    </div>
+
+    <!-- Tiêu đề đầy đủ (cố định nhưng thấp hơn) -->
+    <div class="full-title">
+        BỘ CÂU HỎI ÔN TẬP KIẾN THỨC MÔI GIỚI BẤT ĐỘNG SẢN
     </div>
 
     <!-- Nội dung chính -->
